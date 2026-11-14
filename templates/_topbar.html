@@ -1,0 +1,45 @@
+{% load static %}{% with u=request.resolver_match.url_name %}
+<nav class="navbar navbar-expand-lg mc-nav">
+  <div class="container-xl">
+    <a class="navbar-brand mc-nav-brand" href="{% url 'panel' %}">
+      <img src="{% static 'img/logo.png' %}" alt="" style="height:34px;width:auto" class="mc-logo" draggable="false"><span>MediCita</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mcNav" aria-controls="mcNav" aria-expanded="false" aria-label="Menú">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mcNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+        <li class="nav-item"><a class="nav-link {% if u == 'panel' %}active{% endif %}" href="{% url 'panel' %}"><i class="bi bi-house-door"></i> Inicio</a></li>
+        {% if user.rol == 'PACIENTE' %}
+          <li class="nav-item"><a class="nav-link {% if u == 'horarios' or u == 'cita_nueva' or u == 'cita_confirmacion' %}active{% endif %}" href="{% url 'horarios' %}"><i class="bi bi-calendar-plus"></i> Disponibilidad</a></li>
+          <li class="nav-item"><a class="nav-link {% if u == 'mis_citas' or u == 'cita_cancelar' or u == 'cita_reprogramar' %}active{% endif %}" href="{% url 'mis_citas' %}"><i class="bi bi-journal-medical"></i> Mis citas</a></li>
+        {% elif user.rol == 'PERSONAL' %}
+          <li class="nav-item"><a class="nav-link {% if u == 'paciente_buscar' %}active{% endif %}" href="{% url 'paciente_buscar' %}"><i class="bi bi-person-lines-fill"></i> Pacientes</a></li>
+          {% if paciente_gestionado %}
+            <li class="nav-item"><a class="nav-link {% if u == 'horarios' or u == 'cita_nueva' or u == 'cita_confirmacion' %}active{% endif %}" href="{% url 'horarios' %}"><i class="bi bi-calendar-plus"></i> Disponibilidad</a></li>
+            <li class="nav-item"><a class="nav-link {% if u == 'mis_citas' or u == 'cita_cancelar' or u == 'cita_reprogramar' %}active{% endif %}" href="{% url 'mis_citas' %}"><i class="bi bi-journal-medical"></i> Citas del paciente</a></li>
+          {% endif %}
+        {% elif user.rol == 'PROFESIONAL' %}
+          <li class="nav-item"><a class="nav-link {% if u == 'agenda' %}active{% endif %}" href="{% url 'agenda' %}"><i class="bi bi-calendar3"></i> Mi agenda</a></li>
+        {% elif user.rol == 'ADMIN' %}
+          <li class="nav-item"><a class="nav-link {% if u == 'gestion_usuarios' %}active{% endif %}" href="{% url 'gestion_usuarios' %}"><i class="bi bi-people"></i> Usuarios</a></li>
+          <li class="nav-item"><a class="nav-link {% if u == 'especialidades' or u == 'especialidad_editar' %}active{% endif %}" href="{% url 'especialidades' %}"><i class="bi bi-heart-pulse"></i> Especialidades</a></li>
+          <li class="nav-item"><a class="nav-link {% if u == 'profesionales' or u == 'profesional_nuevo' or u == 'profesional_editar' %}active{% endif %}" href="{% url 'profesionales' %}"><i class="bi bi-person-badge"></i> Profesionales</a></li>
+          <li class="nav-item"><a class="nav-link {% if u == 'politicas' or u == 'politica_nueva' or u == 'politica_editar' %}active{% endif %}" href="{% url 'politicas' %}"><i class="bi bi-shield-check"></i> Políticas</a></li>
+        {% endif %}
+      </ul>
+      <div class="dropdown">
+        <button class="mc-user dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="mc-avatar">{{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}</span>
+          <span class="mc-user-info"><strong>{{ user.first_name }}</strong><small>{{ user.get_rol_display }}</small></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end mc-menu">
+          <li><a class="dropdown-item" href="{% url 'perfil' %}"><i class="bi bi-person-circle"></i> Mi perfil</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="dropdown-item" type="submit"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</button></form></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+{% endwith %}

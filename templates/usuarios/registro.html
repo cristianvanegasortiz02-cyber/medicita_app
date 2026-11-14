@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+{% block titulo %}Crear cuenta · MediCita{% endblock %}
+{% block contenido %}
+<div class="mc-wrap mc-auth"><div class="mc-body">
+  <div class="text-center mb-3">
+    <img src="{% static 'img/logo.png' %}" alt="MediCita" style="height:64px;width:auto" class="mc-logo mb-1" draggable="false">
+    <div class="mc-brand h4 mb-0">MediCita</div>
+  </div>
+  <h1 class="mc-title h5">Crear cuenta de paciente</h1>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% for campo in form %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+        {{ campo }}
+        {% for e in campo.errors %}<div class="mc-alert">{{ e }}</div>{% endfor %}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-mc w-100 mt-2">Registrarme</button>
+  </form>
+  <p class="text-center mt-4 mb-0">¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión</a></p>
+</div></div>
+{% endblock %}

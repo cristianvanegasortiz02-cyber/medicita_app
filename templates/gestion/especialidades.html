@@ -1,0 +1,26 @@
+{% extends "base_app.html" %}
+{% block titulo %}Especialidades · MediCita{% endblock %}
+{% block cuerpo %}
+<div class="mc-pagehead"><div><h1><i class="bi bi-heart-pulse"></i> Especialidades</h1><p>Registra las especialidades que los pacientes podrán buscar.</p></div></div>
+<div class="mc-panel">
+  <h2><i class="bi bi-plus-circle"></i> Nueva especialidad</h2>
+  <form method="post" class="row g-2 align-items-end" novalidate>
+    {% csrf_token %}
+    <div class="col-sm-4"><label class="form-label" for="{{ form.nombre.id_for_label }}">Nombre</label>{{ form.nombre }}</div>
+    <div class="col-sm-5"><label class="form-label" for="{{ form.descripcion.id_for_label }}">Descripción</label>{{ form.descripcion }}</div>
+    <div class="col-sm-3"><button class="btn btn-mc w-100" type="submit">Registrar</button></div>
+  </form>
+  {% for campo in form %}{% for e in campo.errors %}<div class="mc-alert">{{ campo.label }}: {{ e }}</div>{% endfor %}{% endfor %}
+</div>
+<table class="table align-middle mc-tabla mc-tabla-izq">
+  <thead><tr><th>Especialidad</th><th>Descripción</th><th>Profesionales</th><th></th></tr></thead>
+  <tbody>
+  {% for e in especialidades %}
+    <tr><td><strong>{{ e.nombre }}</strong></td><td>{{ e.descripcion }}</td>
+      <td>{% for p in e.profesionales.all %}{{ p }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</td>
+      <td><a class="btn btn-sm btn-mc-outline" href="{% url 'especialidad_editar' e.pk %}">Editar</a></td></tr>
+  {% empty %}<tr><td colspan="4" class="text-muted">Aún no hay especialidades.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base_app.html" %}
+{% block ancho %} mc-wrap-xl{% endblock %}
+{% block titulo %}Mi agenda · MediCita{% endblock %}
+{% block cuerpo %}
+<div class="mc-pagehead"><div><h1><i class="bi bi-calendar3"></i> Mi agenda de horarios</h1><p>Define cuándo puedes atender; los pacientes solo verán estos horarios.</p></div></div>
+<div class="mc-panel">
+  <h2><i class="bi bi-plus-circle"></i> Nuevo horario</h2>
+  <form method="post" class="row g-2 align-items-end" novalidate>
+    {% csrf_token %}
+    <div class="col-sm-3"><label class="form-label" for="{{ form.fecha.id_for_label }}">Fecha</label>{{ form.fecha }}</div>
+    <div class="col-sm-3"><label class="form-label" for="{{ form.hora_inicio.id_for_label }}">Hora de inicio</label>{{ form.hora_inicio }}</div>
+    <div class="col-sm-3"><label class="form-label" for="{{ form.hora_fin.id_for_label }}">Hora de fin</label>{{ form.hora_fin }}</div>
+    <div class="col-sm-3"><button class="btn btn-mc w-100" type="submit">Agregar horario</button></div>
+  </form>
+  {% for e in form.non_field_errors %}<div class="mc-alert">{{ e }}</div>{% endfor %}
+  {% for campo in form %}{% for e in campo.errors %}<div class="mc-alert">{{ campo.label }}: {{ e }}</div>{% endfor %}{% endfor %}
+</div>
+<form method="get" class="mc-filtros row g-2 align-items-end">
+  <div class="col-sm-5"><label class="form-label" for="fecha_f">Consultar una fecha (vacío = próximos horarios)</label>
+    <input class="form-control" type="date" id="fecha_f" name="fecha" value="{{ fecha }}"></div>
+  <div class="col-sm-2"><button class="btn btn-mc w-100" type="submit">Consultar</button></div>
+</form>
+{% if filas %}
+<div class="table-responsive">
+<table class="table table-sm align-middle mc-tabla">
+  <thead><tr><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Estado</th><th>Paciente</th><th>Acción</th></tr></thead>
+  <tbody>
+  {% for f in filas %}
+    <tr>
+      <td>{{ f.horario.fecha|date:"d/m/Y" }}</td>
+      <td>{{ f.horario.hora_inicio|time:"H:i" }}</td>
+      <td>{{ f.horario.hora_fin|time:"H:i" }}</td>
+      <td><span class="badge {% if f.horario.estado == 'DISPONIBLE' %}bg-success{% elif f.horario.estado == 'RESERVADO' %}bg-primary{% else %}bg-secondary{% endif %}">{{ f.horario.get_estado_display }}</span></td>
+      <td>{% if f.cita %}{{ f.cita.paciente.get_full_name }} ({{ f.cita.get_estado_display }}){% else %}—{% endif %}</td>
+      <td>{% if f.eliminable %}
+        <form method="post" action="{% url 'agenda_eliminar' f.horario.pk %}">{% csrf_token %}<button class="btn btn-sm btn-mc-outline" type="submit"><i class="bi bi-trash"></i> Eliminar</button></form>
+      {% else %}<span class="text-muted small">No eliminable</span>{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}<div class="mc-vacio"><i class="bi bi-calendar-x"></i><p>No hay horarios para mostrar.</p></div>{% endif %}
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base_app.html" %}
+{% block ancho %}{% endblock %}
+{% block titulo %}{{ titulo }} · MediCita{% endblock %}
+{% block cuerpo %}
+<div class="mc-pagehead"><div><h1><i class="bi bi-pencil-square"></i> {{ titulo }}</h1>
+  {% for i in info %}<p>{{ i }}</p>{% endfor %}</div></div>
+<form method="post" novalidate>
+  {% csrf_token %}
+  {% for e in form.non_field_errors %}<div class="mc-alert mb-3">{{ e }}</div>{% endfor %}
+  {% for campo in form %}
+    <div class="mb-3">
+      {% if campo.widget_type == 'checkbox' %}
+        <div class="form-check">{{ campo }}
+          <label class="form-check-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label></div>
+      {% else %}
+        <label class="form-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+        {{ campo }}
+      {% endif %}
+      {% if campo.help_text %}<div class="form-text">{{ campo.help_text|safe }}</div>{% endif %}
+      {% for e in campo.errors %}<div class="mc-alert">{{ e }}</div>{% endfor %}
+    </div>
+  {% endfor %}
+  <div class="d-flex gap-2 justify-content-end mt-4">
+    <a class="btn btn-mc-outline" href="{{ volver_url }}">Volver</a>
+    <button class="btn btn-mc" type="submit">{{ boton }}</button>
+  </div>
+</form>
+{% if enlace_extra_url %}<p class="text-center mt-3 mb-0"><a href="{{ enlace_extra_url }}">{{ enlace_extra_texto }}</a></p>{% endif %}
+{% endblock %}

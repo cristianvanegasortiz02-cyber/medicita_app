@@ -1,0 +1,19 @@
+{% extends "base_app.html" %}
+{% block titulo %}Profesionales · MediCita{% endblock %}
+{% block cuerpo %}
+<div class="mc-pagehead">
+  <div><h1><i class="bi bi-person-badge"></i> Profesionales de la salud</h1><p>Registra profesionales y asócialos a sus especialidades.</p></div>
+  <a class="btn btn-mc btn-sm" href="{% url 'profesional_nuevo' %}"><i class="bi bi-plus-lg"></i> Registrar profesional</a>
+</div>
+<table class="table align-middle mc-tabla mc-tabla-izq">
+  <thead><tr><th>Nombre</th><th>Correo</th><th>Registro</th><th>Especialidades</th><th></th></tr></thead>
+  <tbody>
+  {% for p in profesionales %}
+    <tr><td><strong>{{ p }}</strong></td><td>{{ p.usuario.email }}</td><td>{{ p.registro_profesional|default:"—" }}</td>
+      <td>{% for e in p.especialidades.all %}<span class="badge bg-info text-dark">{{ e.nombre }}</span> {% empty %}<span class="text-muted">Sin especialidades</span>{% endfor %}</td>
+      <td><a class="btn btn-sm btn-mc-outline" href="{% url 'profesional_editar' p.pk %}">Editar</a></td></tr>
+  {% empty %}<tr><td colspan="5" class="text-muted">Aún no hay profesionales.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

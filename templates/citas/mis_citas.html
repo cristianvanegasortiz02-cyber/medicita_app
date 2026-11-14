@@ -1,0 +1,48 @@
+{% extends "base_app.html" %}
+{% block ancho %} mc-wrap-xl{% endblock %}
+{% block titulo %}Mis citas · MediCita{% endblock %}
+{% block cuerpo %}
+<div class="mc-pagehead">
+  <div><h1><i class="bi bi-journal-medical"></i> {% if user.rol == 'PERSONAL' %}Citas de {{ paciente.get_full_name }}{% else %}Mis citas{% endif %}</h1><p>Historial con el estado actual de cada cita.</p></div>
+  <a class="btn btn-mc btn-sm" href="{% url 'horarios' %}"><i class="bi bi-plus-lg"></i> Nueva cita</a>
+</div>
+<form method="get" class="mc-filtros row g-2 align-items-end">
+  <div class="col-sm-4">
+    <label class="form-label" for="estado">Estado</label>
+    <select class="form-select" id="estado" name="estado">
+      <option value="">Todos</option>
+      {% for valor, nombre in estados %}<option value="{{ valor }}" {% if valor == estado_sel %}selected{% endif %}>{{ nombre }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-sm-2"><button class="btn btn-mc w-100" type="submit"><i class="bi bi-funnel"></i> Filtrar</button></div>
+</form>
+{% if citas %}
+<div class="table-responsive">
+<table class="table table-sm align-middle mc-tabla">
+  <thead><tr><th>Fecha</th><th>Hora</th><th>Profesional</th><th>Especialidad</th><th>Estado</th><th>Acciones</th></tr></thead>
+  <tbody>
+  {% for c in citas %}
+    <tr>
+      <td>{{ c.horario.fecha|date:"d/m/Y" }}</td>
+      <td>{{ c.horario.hora_inicio|time:"H:i" }}</td>
+      <td>{{ c.horario.profesional }}</td>
+      <td>{{ c.especialidad.nombre }}</td>
+      <td><span class="badge {% if c.estado == 'CANCELADA' or c.estado == 'RECHAZADA' %}bg-danger{% elif c.estado == 'CONFIRMADA' %}bg-success{% elif c.estado == 'REPROGRAMADA' %}bg-warning text-dark{% else %}bg-primary{% endif %}">{{ c.get_estado_display }}</span></td>
+      <td>
+        {% if c.es_activa %}
+          <a class="btn btn-sm btn-mc-outline" href="{% url 'cita_reprogramar' c.pk %}">Reprogramar</a>
+          <a class="btn btn-sm btn-mc-outline" href="{% url 'cita_cancelar' c.pk %}">Cancelar</a>
+          {% if user.rol == 'PERSONAL' and c.estado != 'CONFIRMADA' %}
+            <form method="post" action="{% url 'cita_confirmar' c.pk %}">{% csrf_token %}<button class="btn btn-sm btn-mc" type="submit">Confirmar</button></form>
+          {% endif %}
+        {% else %}<span class="text-muted">—</span>{% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+  <div class="mc-vacio"><i class="bi bi-journal-x"></i><p>No hay citas para mostrar.</p></div>
+{% endif %}
+{% endblock %}

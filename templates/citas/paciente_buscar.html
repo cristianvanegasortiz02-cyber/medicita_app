@@ -1,0 +1,14 @@
+{% extends "base_app.html" %}
+{% block ancho %}{% endblock %}
+{% block titulo %}Buscar paciente · MediCita{% endblock %}
+{% block cuerpo %}
+<div class="mc-pagehead"><div><h1><i class="bi bi-person-lines-fill"></i> Gestionar citas de un paciente</h1><p>Escribe el documento de identidad. Si el paciente no tiene cuenta, debe registrarse primero.</p></div></div>
+<form method="post" novalidate>
+  {% csrf_token %}
+  <label class="form-label" for="documento">Documento del paciente</label>
+  <div class="input-group"><span class="input-group-text"><i class="bi bi-card-text"></i></span>
+    <input class="form-control" id="documento" name="documento" autofocus></div>
+  {% if error %}<div class="mc-alert">{{ error }}</div>{% endif %}
+  <div class="d-grid mt-4"><button class="btn btn-mc" type="submit"><i class="bi bi-search"></i> Buscar paciente</button></div>
+</form>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base_app.html" %}
+{% block titulo %}Políticas · MediCita{% endblock %}
+{% block cuerpo %}
+<div class="mc-pagehead">
+  <div><h1><i class="bi bi-shield-check"></i> Políticas de cancelación y reprogramación</h1><p>La política vigente se aplica a todas las cancelaciones y reprogramaciones.</p></div>
+  <a class="btn btn-mc btn-sm" href="{% url 'politica_nueva' %}"><i class="bi bi-plus-lg"></i> Nueva política</a>
+</div>
+{% if not hay_vigente %}<div class="mc-msg mc-msg-info">No hay una política vigente: se aplica la predeterminada (24 horas y 2 reprogramaciones).</div>{% endif %}
+<table class="table align-middle mc-tabla">
+  <thead><tr><th>Nombre</th><th>Anticipación mínima (horas)</th><th>Máx. reprogramaciones</th><th>Vigente</th><th></th></tr></thead>
+  <tbody>
+  {% for p in politicas %}
+    <tr><td>{{ p.nombre }}</td><td>{{ p.horas_min_anticipacion }}</td><td>{{ p.max_reprogramaciones }}</td>
+      <td>{% if p.activa %}<span class="badge bg-success">Vigente</span>{% else %}<span class="badge bg-secondary">Inactiva</span>{% endif %}</td>
+      <td><a class="btn btn-sm btn-mc-outline" href="{% url 'politica_editar' p.pk %}">Editar</a></td></tr>
+  {% empty %}<tr><td colspan="5" class="text-muted">Aún no hay políticas.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

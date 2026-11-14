@@ -1,0 +1,45 @@
+{% extends "base_app.html" %}
+{% block ancho %} mc-wrap-xl{% endblock %}
+{% block titulo %}Usuarios · MediCita{% endblock %}
+{% block cuerpo %}
+<div class="mc-pagehead"><div><h1><i class="bi bi-people"></i> Gestionar usuarios</h1><p>Activa, inactiva o cambia el rol de los usuarios del sistema.</p></div></div>
+<form method="get" class="mc-filtros row g-2 align-items-end">
+  <div class="col-sm-5"><label class="form-label" for="q">Buscar</label>
+    <input class="form-control" id="q" name="q" value="{{ q }}" placeholder="Nombre, correo o documento"></div>
+  <div class="col-sm-4"><label class="form-label" for="rolf">Rol</label>
+    <select class="form-select" id="rolf" name="rol"><option value="">Todos</option>
+      {% for v, n in roles %}<option value="{{ v }}" {% if v == rol_sel %}selected{% endif %}>{{ n }}</option>{% endfor %}</select></div>
+  <div class="col-sm-3"><button class="btn btn-mc w-100" type="submit"><i class="bi bi-funnel"></i> Filtrar</button></div>
+</form>
+<div class="table-responsive">
+<table class="table table-sm align-middle mc-tabla mc-tabla-izq">
+  <thead><tr><th>Nombre</th><th>Correo</th><th>Documento</th><th>Rol</th><th>Estado</th></tr></thead>
+  <tbody>
+  {% for u in usuarios %}
+    <tr>
+      <td><strong>{{ u.get_full_name }}</strong></td><td>{{ u.email }}</td><td>{{ u.documento }}</td>
+      <td>
+        {% if u.pk == user.pk %}{{ u.get_rol_display }}
+        {% else %}
+        <form method="post" action="{% url 'usuario_rol' u.pk %}" class="d-flex gap-1">{% csrf_token %}
+          <select class="form-select form-select-sm" name="rol">
+            {% for v, n in roles %}<option value="{{ v }}" {% if v == u.rol %}selected{% endif %}>{{ n }}</option>{% endfor %}
+          </select>
+          <button class="btn btn-sm btn-mc-outline" type="submit">Cambiar</button>
+        </form>
+        {% endif %}
+      </td>
+      <td>
+        {% if u.is_active %}<span class="badge bg-success">Activo</span>{% else %}<span class="badge bg-secondary">Inactivo</span>{% endif %}
+        {% if u.pk != user.pk %}
+        <form method="post" action="{% url 'usuario_estado' u.pk %}" class="ms-1">{% csrf_token %}
+          <button class="btn btn-sm btn-mc-outline" type="submit">{% if u.is_active %}Inactivar{% else %}Activar{% endif %}</button></form>
+        {% endif %}
+      </td>
+    </tr>
+  {% empty %}<tr><td colspan="5" class="text-muted">No hay usuarios con esos filtros.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

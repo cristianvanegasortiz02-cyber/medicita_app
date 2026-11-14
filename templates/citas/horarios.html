@@ -1,0 +1,40 @@
+{% extends "base_app.html" %}
+{% block titulo %}Horarios disponibles · MediCita{% endblock %}
+{% block cuerpo %}
+<div class="mc-pagehead"><div><h1><i class="bi bi-calendar-plus"></i> Horarios disponibles</h1><p>Elige una especialidad para ver y reservar un horario.</p></div></div>
+<form method="get" class="mc-filtros row g-2 align-items-end">
+  <div class="col-sm-5">
+    <label class="form-label" for="especialidad">Especialidad</label>
+    <select class="form-select" id="especialidad" name="especialidad">
+      <option value="">Selecciona…</option>
+      {% for e in especialidades %}
+        <option value="{{ e.pk }}" {% if e.pk|stringformat:"s" == esp_id %}selected{% endif %}>{{ e.nombre }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-sm-4">
+    <label class="form-label" for="fecha">Fecha</label>
+    <input class="form-control" type="date" id="fecha" name="fecha" value="{{ fecha }}">
+  </div>
+  <div class="col-sm-3"><button class="btn btn-mc w-100" type="submit"><i class="bi bi-search"></i> Buscar</button></div>
+</form>
+{% if not buscado %}
+  <div class="mc-vacio"><i class="bi bi-search"></i><p>Selecciona una especialidad para ver los horarios disponibles.</p></div>
+{% elif horarios %}
+  <table class="table mc-tabla">
+    <thead><tr><th>Fecha</th><th>Hora</th><th>Profesional</th><th>Acción</th></tr></thead>
+    <tbody>
+    {% for h in horarios %}
+      <tr>
+        <td>{{ h.fecha|date:"d/m/Y" }}</td>
+        <td>{{ h.hora_inicio|time:"H:i" }}</td>
+        <td>{{ h.profesional }}</td>
+        <td><a class="btn btn-mc btn-sm" href="{% url 'cita_nueva' %}?horario={{ h.pk }}&especialidad={{ esp_id }}">Reservar</a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="mc-vacio"><i class="bi bi-calendar-x"></i><p>No hay horarios disponibles con esos filtros.</p></div>
+{% endif %}
+{% endblock %}

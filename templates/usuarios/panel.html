@@ -1,0 +1,27 @@
+{% extends "base_app.html" %}
+{% block titulo %}Inicio · MediCita{% endblock %}
+{% block cuerpo %}
+<div class="mc-hero">
+  <div>
+    <h1>Bienvenido, {{ user.first_name }}</h1>
+    <p>{{ user.get_rol_display }} · {% now "d/m/Y" %}</p>
+  </div>
+  <i class="bi bi-heart-pulse mc-hero-icon"></i>
+</div>
+<div class="row g-3">
+{% if user.rol == 'PACIENTE' %}
+  <div class="col-md-6"><a class="mc-tile" href="{% url 'horarios' %}"><span class="mc-tile-icon"><i class="bi bi-calendar-plus"></i></span><span><strong>Consultar disponibilidad</strong><small>Busca horarios y reserva tu cita</small></span></a></div>
+  <div class="col-md-6"><a class="mc-tile" href="{% url 'mis_citas' %}"><span class="mc-tile-icon"><i class="bi bi-journal-medical"></i></span><span><strong>Mis citas</strong><small>Historial, cancelar o reprogramar</small></span></a></div>
+{% elif user.rol == 'PERSONAL' %}
+  <div class="col-md-6"><a class="mc-tile" href="{% url 'paciente_buscar' %}"><span class="mc-tile-icon"><i class="bi bi-person-lines-fill"></i></span><span><strong>Gestionar citas de un paciente</strong><small>Buscar por documento y agendar</small></span></a></div>
+{% elif user.rol == 'PROFESIONAL' %}
+  <div class="col-md-6"><a class="mc-tile" href="{% url 'agenda' %}"><span class="mc-tile-icon"><i class="bi bi-calendar3"></i></span><span><strong>Mi agenda de horarios</strong><small>Agregar, consultar y eliminar horarios</small></span></a></div>
+{% elif user.rol == 'ADMIN' %}
+  <div class="col-md-6"><a class="mc-tile" href="{% url 'gestion_usuarios' %}"><span class="mc-tile-icon"><i class="bi bi-people"></i></span><span><strong>Usuarios</strong><small>Activar, inactivar y cambiar roles</small></span></a></div>
+  <div class="col-md-6"><a class="mc-tile" href="{% url 'especialidades' %}"><span class="mc-tile-icon"><i class="bi bi-heart-pulse"></i></span><span><strong>Especialidades</strong><small>Registrar y editar especialidades</small></span></a></div>
+  <div class="col-md-6"><a class="mc-tile" href="{% url 'profesionales' %}"><span class="mc-tile-icon"><i class="bi bi-person-badge"></i></span><span><strong>Profesionales</strong><small>Registrar y asociar especialidades</small></span></a></div>
+  <div class="col-md-6"><a class="mc-tile" href="{% url 'politicas' %}"><span class="mc-tile-icon"><i class="bi bi-shield-check"></i></span><span><strong>Políticas de citas</strong><small>Anticipación y reprogramaciones</small></span></a></div>
+{% endif %}
+  <div class="col-md-6"><a class="mc-tile" href="{% url 'perfil' %}"><span class="mc-tile-icon"><i class="bi bi-person-circle"></i></span><span><strong>Mi perfil</strong><small>Datos personales y contraseña</small></span></a></div>
+</div>
+{% endblock %}

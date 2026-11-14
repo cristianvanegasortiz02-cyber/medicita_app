@@ -1,0 +1,24 @@
+{% extends "base_app.html" %}
+{% block ancho %}{% endblock %}
+{% block titulo %}Confirmar cita · MediCita{% endblock %}
+{% block cuerpo %}
+<div class="mc-pagehead"><div><h1><i class="bi bi-calendar-check"></i> Confirmar cita</h1><p>Revisa los datos antes de reservar.</p></div></div>
+<div class="mc-resumen mb-3">
+  <i class="bi bi-person"></i> Paciente: <strong>{{ paciente.get_full_name }}</strong><br>
+  <i class="bi bi-heart-pulse"></i> Especialidad: <strong>{{ especialidad.nombre }}</strong><br>
+  <i class="bi bi-person-badge"></i> Profesional: <strong>{{ horario.profesional }}</strong><br>
+  <i class="bi bi-clock"></i> {{ horario.fecha|date:"d/m/Y" }} · {{ horario.hora_inicio|time:"H:i" }}
+</div>
+<form method="post" novalidate>
+  {% csrf_token %}
+  <input type="hidden" name="horario" value="{{ horario.pk }}">
+  <input type="hidden" name="especialidad" value="{{ especialidad.pk }}">
+  <label class="form-label" for="motivo">Motivo de consulta</label>
+  <input class="form-control" id="motivo" name="motivo" maxlength="200" value="{{ motivo }}" placeholder="Control general">
+  {% if error %}<div class="mc-alert">{{ error }}</div>{% endif %}
+  <div class="d-flex gap-2 justify-content-end mt-4">
+    <a class="btn btn-mc-outline" href="{% url 'horarios' %}?especialidad={{ especialidad.pk }}">Volver</a>
+    <button class="btn btn-mc" type="submit" {% if error %}disabled{% endif %}>Confirmar cita</button>
+  </div>
+</form>
+{% endblock %}

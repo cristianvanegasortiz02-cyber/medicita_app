@@ -1,0 +1,23 @@
+{% extends "base_app.html" %}
+{% block ancho %}{% endblock %}
+{% block titulo %}Cancelar cita · MediCita{% endblock %}
+{% block cuerpo %}
+<div class="mc-pagehead"><div><h1><i class="bi bi-calendar-x"></i> Cancelar cita</h1><p>La cancelación se valida con la política vigente.</p></div></div>
+<div class="mc-resumen mb-3">
+  <i class="bi bi-heart-pulse"></i> Especialidad: <strong>{{ cita.especialidad.nombre }}</strong><br>
+  <i class="bi bi-person-badge"></i> Profesional: <strong>{{ cita.horario.profesional }}</strong><br>
+  <i class="bi bi-clock"></i> {{ cita.horario.fecha|date:"d/m/Y" }} · {{ cita.horario.hora_inicio|time:"H:i" }}<br>
+  <i class="bi bi-info-circle"></i> Estado: <strong>{{ cita.get_estado_display }}</strong>
+</div>
+<p class="small text-muted">Política vigente: la cancelación requiere al menos {{ politica.horas_min_anticipacion }} horas de anticipación.</p>
+<form method="post" novalidate>
+  {% csrf_token %}
+  <label class="form-label" for="causa">Motivo de la cancelación (opcional)</label>
+  <input class="form-control" id="causa" name="causa" maxlength="200">
+  {% if error %}<div class="mc-alert">{{ error }}</div>{% endif %}
+  <div class="d-flex gap-2 justify-content-end mt-4">
+    <a class="btn btn-mc-outline" href="{% url 'mis_citas' %}">Volver</a>
+    <button class="btn btn-mc" type="submit" {% if error %}disabled{% endif %}>Confirmar cancelación</button>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base_app.html" %}
+{% block titulo %}Reprogramar cita · MediCita{% endblock %}
+{% block cuerpo %}
+<div class="mc-pagehead"><div><h1><i class="bi bi-arrow-repeat"></i> Reprogramar cita</h1><p>Elige otro horario de la misma especialidad.</p></div></div>
+<div class="mc-resumen mb-3">
+  <i class="bi bi-heart-pulse"></i> Especialidad: <strong>{{ cita.especialidad.nombre }}</strong><br>
+  <i class="bi bi-person-badge"></i> Profesional actual: <strong>{{ cita.horario.profesional }}</strong><br>
+  <i class="bi bi-clock"></i> Horario actual: {{ cita.horario.fecha|date:"d/m/Y" }} {{ cita.horario.hora_inicio|time:"H:i" }}<br>
+  <i class="bi bi-arrow-repeat"></i> Reprogramaciones realizadas: {{ cita.reprogramaciones }} de {{ politica.max_reprogramaciones }}
+</div>
+<p class="small text-muted">Política vigente: al menos {{ politica.horas_min_anticipacion }} horas de anticipación y máximo {{ politica.max_reprogramaciones }} reprogramaciones.</p>
+{% if bloqueo %}
+  <div class="mc-alert">{{ bloqueo }}</div>
+{% else %}
+  {% if error %}<div class="mc-alert mb-3">{{ error }}</div>{% endif %}
+  <form method="get" class="mc-filtros row g-2 align-items-end">
+    <div class="col-sm-5"><label class="form-label" for="fecha">Filtrar por fecha</label>
+      <input class="form-control" type="date" id="fecha" name="fecha" value="{{ fecha }}"></div>
+    <div class="col-sm-3"><button class="btn btn-mc w-100" type="submit"><i class="bi bi-search"></i> Buscar</button></div>
+  </form>
+  {% if horarios %}
+  <table class="table mc-tabla">
+    <thead><tr><th>Fecha</th><th>Hora</th><th>Profesional</th><th>Acción</th></tr></thead>
+    <tbody>
+    {% for h in horarios %}
+      <tr><td>{{ h.fecha|date:"d/m/Y" }}</td><td>{{ h.hora_inicio|time:"H:i" }}</td><td>{{ h.profesional }}</td>
+        <td><form method="post">{% csrf_token %}<input type="hidden" name="horario" value="{{ h.pk }}">
+          <button class="btn btn-mc btn-sm" type="submit">Elegir</button></form></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}<div class="mc-vacio"><i class="bi bi-calendar-x"></i><p>No hay otros horarios disponibles para esta especialidad.</p></div>{% endif %}
+{% endif %}
+<a class="btn btn-mc-outline mt-3" href="{% url 'mis_citas' %}">Volver</a>
+{% endblock %}

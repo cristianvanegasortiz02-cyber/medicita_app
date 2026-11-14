@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block contenido %}
+{% include "_topbar.html" %}
+<div class="mc-wrap mc-wrap-md{% block ancho %} mc-wrap-wide{% endblock %}">
+  <div class="mc-body">
+    {% include "_mensajes.html" %}
+    {% if paciente_gestionado %}
+    <div class="mc-banner d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <span><i class="bi bi-person-check"></i> Gestionando las citas de <strong>{{ paciente_gestionado.get_full_name }}</strong> (documento {{ paciente_gestionado.documento }})</span>
+      <form method="post" action="{% url 'paciente_cambiar' %}">{% csrf_token %}
+        <button class="btn btn-sm btn-mc-outline" type="submit">Cambiar paciente</button></form>
+    </div>
+    {% endif %}
+    {% block cuerpo %}{% endblock %}
+  </div>
+</div>
+<footer class="mc-footer">MediCita · Gestión de citas médicas</footer>
+{% endblock %}
